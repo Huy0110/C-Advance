@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdio_ext.h>
+#include <math.h>
+#include <string.h>
+#include <ctype.h>
+#include "cgraphv1.h"
+
+int menuVaLuaChon(int a,int b)
+{
+  int luaChon,buff;
+  char c;
+  printf("+-----+--------------------------------------------------+\n");
+  printf("|%25s%6s%25s|\n","","MENU","");
+  printf("+-----+--------------------------------------------------+\n");
+  printf("|%5d|%-50s|\n",1,"Y nghia");
+  printf("+-----+--------------------------------------------------+\n");
+
+  do
+    {
+      __fpurge(stdin);
+      printf("Nhap vao lua chon cua ban:");
+      buff=scanf("%d%c",&luaChon,&c);
+      if(buff!=2&&c!='\n'||luaChon<a||luaChon>b) printf("Ban da nhap sai cu phap\n");
+    }while(buff!=2&&c!='\n'||luaChon<a||luaChon>b);
+  return luaChon;
+}
+
+void docFile(char *tenFile,Graph g,Graph gDiBo, int* soDinh,int* soCanh)
+{
+  int id1,id2;
+  double doDai;
+  int n,m;
+  int i;
+  FILE *f=fopen(tenFile,"r");
+  if(f==NULL)
+    {
+      printf("File open failed!\n");
+      return;
+    }
+  fscanf(f,"%d %d\n",&n,&m);
+  for(i=0;i<m;i++)
+    {
+      fscanf(f,"%d %d %lf\n",&id1,&id2,&dodai);
+      addVertex(g,id1,"1");
+      addVertex(g,id2,"1");
+      addEdge(g,id1,id2,doDai);
+      if(dodai>=50)
+	{
+	  addVertex(gDiBo,id1,"1");
+	  addVertex(gDiBo,id2,"1");
+	  addEdge(gDiBo,id1,id2,doDai);
+	}
+    }
+  *soDinh=n;
+  *soCanh=m;
+}
+
+
+int main()
+{
+
+  int thoat,luaChon;
+  thoat=0;
+  Graph g=createGraph(UNDIRECT_GRAPH);
+  Graph gDiBo=createGraph(UNDIRECT_GRAPH);
+  int soDinh,soCanh;
+  docFile("dothi.txt",g,gDiBo,&soDinh,&soCanh);
+  do
+    {
+      luaChon= menuVaLuaChon(1,4);
+      switch(luaChon)
+	{
+	case 1:
+	  //ham1
+	   docFile("dothi.txt",g,gDiBo,&soDinh,&soCanh);
+	   
+	    break;
+	case 2:
+	  //ham2
+	  break;
+	case 3:
+	  //ham3
+	  break;
+	case 4:
+	  thoat=1;
+	  break;
+	}	
+    }while(thoat!=1);
+}

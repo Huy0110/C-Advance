@@ -1,0 +1,83 @@
+#include "cgraphv1.h"
+#define Max_Str 100
+
+void docFileDang2TQ(char *tenFile, Graph g, int* soIP, int* soCanh)
+{
+
+   FILE *f;
+  char ten[Max_Str];
+  int ip,ipKhac;
+  int n;
+  f=fopen(tenFile,"r");
+  if(f==NULL)
+    {
+      printf("File open failed\n");
+      exit(1);
+    }
+  fscanf(f,"%d\n",&n);
+  char str[Max_Str];
+  for(int i=0;i<n;i++)
+    {
+      fscanf(f,"%s %d\n",ten,&ip);
+      strcat(ten," ");
+      ten[strlen(ten)-1]=0;
+      addVertex(g,ip,ten);
+    }
+  *soIP=n;
+
+  fscanf(f,"%d\n",&n);
+  for(int i=0;i<n;i++)
+    {
+      fscanf(f,"%d",&ip);
+      fgets(str,Max_Str,f);
+      str[strlen(str)-1]=0;
+       strncpy(str,&str[1],strlen(str)-1);
+       str[strlen(str)-1]=0;
+       //take note
+       // new la dang ip:ip1-ip2-ip3 thi thay s[2]="-";
+      const char s[2]= "-";
+      //chu y ben tren
+      
+      char *token;
+      if(strlen(str)==4)
+	addEdge(g,ip,atoi(str),1.0);
+      else
+	{
+      token = strtok(str, s);
+      while( token != NULL )
+	{
+	  ipKhac=atoi(token);
+	  addEdge(g,ip,ipKhac,1.0);
+	  token = strtok(NULL, s);
+	}
+	}
+    }
+  fclose(f);
+}
+
+void printGraph(Graph g)
+{
+  JRB node,node2;
+  JRB tree;
+  printf("Vertieces:\n");
+  jrb_traverse(node,g.vertices)
+    printf("%d %s\n",jval_i(node->key),jval_s(node->val));
+  printf("Edges:\n");
+  jrb_traverse(node,g.edges)
+    {
+      tree=jval_v(node->val);
+      printf("%d with ",jval_i(node->key));
+      jrb_traverse(node2,tree)
+	printf("%d(val = %lf)   ",jval_i(node2->key),jval_d(node2->val));
+      printf("\n");
+    }
+
+}
+
+int main()
+{
+  Graph g=createGraph(DIRECT_GRAPH);
+  int soIP,soCanh;
+  docFileDang2TQ("data20192KipTQ.txt",g,&soIP,&soCanh);
+  printGraph(g);
+}

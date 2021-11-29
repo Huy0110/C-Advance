@@ -1,0 +1,56 @@
+void loadFile(char fileName[])
+{
+  openBT();
+  int count =0;
+  char word[WORD_MAX_LEN];
+  char mean[MEAN_MAX_LEN];
+  char word_lower[WORD_MAX_LEN];
+  char line[LINE_MAX_LEN];
+  FILE *f;
+  int i,j,k;
+  f=open(fileName,"r");
+  if(f==NULL)
+    {
+      gtk_text_buffer_insert_at_cursor(meaningViewBuff,"File open failed!\n",-1);
+      return ;
+    }
+  else
+    {
+      fgets(line,LINE_MAX_LEN,f);
+      while(!feof(f))
+	{
+	  while(1)
+	    {
+	      // fgets(line,LINE_MAX_LEN,f);
+	      if(line[0]=='@')
+		{
+		  int i=0;
+		  while(line[i]!='/')
+		    i++;
+		  strncpy(word,&line[1],i-1);
+		  word[i-1]='\0';
+		  strLower(wordLower,word);
+		  strcpy(mean,"");
+		  strncpy(mean,&line[i],strlen(line)-i+1;);
+		}
+	      strcat(mean,line);
+	      fgets(line,LINE_MAX_LEN,f);
+	      if(line[0]=='@')
+		{
+		  if(bfndky(eng_vie,wordLower,&j)!=0)
+		    {
+		      btins(eng_vie,wordLower,mean,strlen(mean)*sizeof(char));
+		      count++;		      
+		    }
+		  break;
+		}
+	    }
+	}
+      gtk_text_buffer_insert_at_cursor(meaningViewBuff,"Load file done",-1);
+      free(word);
+      free(mean);
+      free(line);
+      free(wordLower);
+      closeBT();  
+    }
+}

@@ -1,0 +1,124 @@
+#include <stdio.h>
+#include <stdio_ext.h>
+#include <math.h>
+#include <string.h>
+#include <ctype.h>
+#include "cgraphv1.h"
+
+int menuVaLuaChon(int a,int b)
+{
+  int luaChon,buff;
+  char c;
+  printf("+-----+--------------------------------------------------+\n");
+  printf("|%25s%6s%25s|\n","","MENU","");
+  printf("+-----+--------------------------------------------------+\n");
+  printf("|%5d|%-50s|\n",1,"Y nghia");
+  printf("+-----+--------------------------------------------------+\n");
+
+  do
+    {
+      __fpurge(stdin);
+      printf("Nhap vao lua chon cua ban:");
+      buff=scanf("%d%c",&luaChon,&c);
+      if(buff!=2&&c!='\n'||luaChon<a||luaChon>b) printf("Ban da nhap sai cu phap\n");
+    }while(buff!=2&&c!='\n'||luaChon<a||luaChon>b);
+  return luaChon;
+}
+
+int docFileSanPham(Graph gSanPham, char* tenFile)
+{
+  int n;
+  FILE* f;
+  int id;
+  char str[100];
+  f=fopen(tenFile,"r");
+  if(f==NULL)
+    {
+      printf("File open failed\n");
+      exit(1);
+    }
+  fscanf(f,"%d\n",&n);
+  for(int i=0;i<n;i++)
+    {
+      fscanf(f,"%s %d\n",str,&id);
+      addVertex(gSanPham,id,str);
+    }
+}
+
+int bienDoi(int idKhoHang)
+{
+  return idKhoHang*1000;
+}
+
+int docFileKhoHang(Graph gSanPham, Graph gKhoHang, Graph g, char *tenFile, int m)
+{
+  int n;
+  int k;
+  FILE* f;
+  int id;
+  int i,j;
+  char str[100];
+  int idSanPham, soLuong;
+  int id1, id2, doDai;
+  f=fopen(tenFile,"r");
+  if(f==NULL)
+    {
+      printf("File open failed\n");
+      exit(1);
+    }
+  fscanf(f,"%d\n",&n);
+  for(i=0;i<n;i++)
+    {
+      fscanf(f,"%s %d\n",str,&id);
+      addVertex(gKhoHang,id,str);
+      addVertex(g,bienDoi(id),str);
+      for(j=0;j<m;j++)
+	{
+	  fscanf(f,"%d %d\n",&idSanPham,&soLuong);
+	  addEdge(g,id,idSanPham,soLuong);
+	}
+    }
+  fscanf(f,"%d\n",&k);
+  for(i=0;i<k;i++)
+    {
+      fscanf(f,"%d %d %d\n",&id1,&id2,&doDai);
+      addEdge(gKhoHang,id1,id2,(double)doDai);
+    }
+  return n;
+}
+
+int main()
+{
+  Graph g= createGraph(UNDIRECT_GRAPH);
+  Graph gSanPham= createGraph(UNDIRECT_GRAPH);
+  Graph gKhoHang= createGraph(UNDIRECT_GRAPH);
+  int m = docFileSanPham(gSanPham,"sanpham.txt");
+  int n = docFileKhoHang(gSanPham,gKhoHang,g,"khohang.txt",m);
+  JRB node;
+  int thoat,luaChon;
+  thoat=0;
+  do
+    {
+      luaChon= menuVaLuaChon(1,4);
+      switch(luaChon)
+	{
+	case 1:
+	  //ham1
+	  printf("C-Advanced HK20182\n");
+	    break;
+	case 2:
+	  //ham2
+	  jrb_traverse(node,gKhoHang.vertices)
+	    {
+	      printf("%s %d\n",jval_s(node->val),jval_i(node->key));
+	    }
+	  break;
+	case 3:
+	  //ham3
+	  break;
+	case 4:
+	  thoat=1;
+	  break;
+	}	
+    }while(thoat!=1);
+}
